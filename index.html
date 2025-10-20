@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ Rox Here :) </title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.querySelector('.back-video');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const glassCard = document.querySelector('.glass-card');
+            const cursorDot = document.getElementById('cursor-dot');
+            const trailContainer = document.getElementById('cursor-trail-container');
+            const menuIcon = document.getElementById('menuIcon');
+            const menu = document.getElementById('menu');
+
+            // Mobile Menu Toggle
+            menuIcon.addEventListener('click', () => {
+                menu.classList.toggle('active');
+                menuIcon.classList.toggle('active');
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!menu.contains(e.target) && !menuIcon.contains(e.target) && menu.classList.contains('active')) {
+                    menu.classList.remove('active');
+                    menuIcon.classList.remove('active');
+                }
+            });
+
+            // Close menu when clicking a link
+            menu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    menu.classList.remove('active');
+                    menuIcon.classList.remove('active');
+                });
+            });
+            
+            // Video volume control
+            video.volume = volumeSlider.value;
+            volumeSlider.addEventListener('input', function() {
+                video.volume = this.value;
+            });
+
+            // Mouse tracking variables
+            let mouseX = 0;
+            let mouseY = 0;
+            let cursorX = 0;
+            let cursorY = 0;
+            const particles = [];
+            const maxParticles = 15;
+
+            // Track mouse position
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                if (particles.length < maxParticles) {
+                    createParticle();
+                }
+            });
+
+            // Create particle function
+            function createParticle() {
+                const particle = document.createElement('div');
+                particle.className = 'cursor-trail-particle';
+                trailContainer.appendChild(particle);
+                particles.push({
+                    element: particle,
+                    x: cursorX,
+                    y: cursorY,
+                    speed: Math.random() * 2 + 1,
+                    vx: Math.random() * 2 - 1,
+                    vy: Math.random() * 2 - 1,
+                    life: 0
+                });
+            }
+
+            // Card tilt effect
+            glassCard.addEventListener('mousemove', (e) => {
+                const rect = glassCard.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const angleX = (y - centerY) / 15;
+                const angleY = (centerX - x) / 15;
+                
+                glassCard.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) translateZ(10px)`;
+            });
+            
+            glassCard.addEventListener('mouseleave', () => {
+                glassCard.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+            });
+
+            // Animation loop
+            function animate() {
+                // Smooth cursor movement
+                cursorX += (mouseX - cursorX) * 0.1;
+                cursorY += (mouseY - cursorY) * 0.1;
+                
+                cursorDot.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+                
+                // Update particles
+                particles.forEach((particle, index) => {
+                    particle.life += 0.05;
+                    
+                    particle.x += (cursorX - particle.x) * 0.1;
+                    particle.y += (cursorY - particle.y) * 0.1;
+                    
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+                    
+                    const scale = Math.max(0, 1 - particle.life);
+                    
+                    particle.element.style.transform = `translate(${particle.x}px, ${particle.y}px) scale(${scale})`;
+                    particle.element.style.opacity = 1 - particle.life;
+                    
+                    if (particle.life >= 1) {
+                        trailContainer.removeChild(particle.element);
+                        particles.splice(index, 1);
+                    }
+                });
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        });
+    </script>
+</head>
+<body>
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-trail-container" id="cursor-trail-container"></div>
+    <div class="hero">
+        <video autoplay loop  plays-inline class="back-video">
+            <source src="UxxajLWwzqY.mp4" type="video/mp4">
+        </video>
+
+        <nav>
+            <div class="logo-container">
+                <img src="capital p letter.png" class="logo">
+                <div class="volume-control">
+                    <label for="volumeSlider" class="sr-only">Video Volume</label>
+                    <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0" title="Video Volume">
+                </div>
+            </div>
+            <div class="menu-icon" id="menuIcon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul id="menu">
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact Me</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="Socail.html">Social Sites</a></li>
+            </ul>
+            <div class="social-icons">
+                <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" class="social-icon" title="Visit my GitHub profile">
+                    <i class="fab fa-github" aria-hidden="true"></i>
+                    <span class="sr-only">GitHub</span>
+                </a>
+                <a href="https://instagram.com/yourusername" target="_blank" rel="noopener noreferrer" class="social-icon" title="Follow me on Instagram">
+                    <i class="fab fa-instagram" aria-hidden="true"></i>
+                    <span class="sr-only">Instagram</span>
+                </a>
+                <a href="https://youtube.com/yourchannel" target="_blank" rel="noopener noreferrer" class="social-icon" title="Subscribe to my YouTube channel">
+                    <i class="fab fa-youtube" aria-hidden="true"></i>
+                    <span class="sr-only">YouTube</span>
+                </a>
+                <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener noreferrer" class="social-icon" title="Connect with me on LinkedIn">
+                    <i class="fab fa-linkedin" aria-hidden="true"></i>
+                    <span class="sr-only">LinkedIn</span>
+                </a>
+            </div>
+        </nav>
+        <div class="content">
+            <div class="glass-card">
+                <div class="card-content">
+                    <h1>Rox Here :)</h1>
+                    <a href="#" class="hire-btn">Hire Me</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
